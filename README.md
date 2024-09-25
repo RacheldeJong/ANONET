@@ -1,19 +1,19 @@
 # ANONET
 This repository contains code measuring anonymity with various anonymity measrues and anonymizing networks with various heuristic algorithms.
-The repository accompanies the following research paper: [1].
+The repository accompanies the following research papers: [1, 2].
 
 # Measures:
 Nodes are equivalent if the following is equal:
-* `Degree`: the number of connections of the node [2]
-* `Count`: the number of nodes and edges in the d-neighborhood of the node [1] 
-* `Degree distribution`: the degree distribution in the d-neighborhood of the node [1]
-* `d-k-Anonymity`: the structure of the $d$-neighborhood [3] (based on isomorphism)
-* `vrq`: the degree distribution over all nodes at distance d of a node [4]
+* `Degree`: the number of connections of the node [3]
+* `Count`: the number of nodes and edges in the d-neighborhood of the node [2] 
+* `Degree distribution`: the degree distribution in the d-neighborhood of the node [2]
+* `d-k-Anonymity`: the structure of the $d$-neighborhood [4] (based on isomorphism)
+* `vrq`: the degree distribution over all nodes at distance d of a node [5]
 
 `Note:` each of these measures can be used as a heuristic for computing anonymity.
 
 # Anonymity-cascade
-Uniqueness and twin-uniqueness for anonymity-cascade as described in [5] can be computed with this framework.
+Uniqueness and twin-uniqueness for anonymity-cascade as described in [6] can be computed with this framework.
 
 # Anonymization algorithms
 Anonymization can be done by deleting edges. 
@@ -32,7 +32,7 @@ The following anonymization algorithms are implemented:
 # How to run
 
 ## Installation
-Before using this code, the nauty framework [6] should be downloaded from: https://users.cecs.anu.edu.au/~bdm/nauty/
+Before using this code, the nauty framework [7] should be downloaded from: https://users.cecs.anu.edu.au/~bdm/nauty/
 
 Move this git-directory (ANONET) in the downloaded nauty directory (nauty27r3).
 To install Nauty run `./configure` and `./make` in the folder.
@@ -122,9 +122,12 @@ Various command line arguments can be used to indicate what to run, and to adjus
 	* `-u [arg]`: set recompute gap to arg (default -1: 0.1 * budget)
 
 # References
-[1] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "A systematic comparison of measures for k-anonymity in networks." arXiv preprint arXiv:2407.02290 (2024). \
-[2] Liu, Kun, and Evimaria Terzi. "Towards identity anonymization on graphs." Proceedings of the 2008 ACM SIGMOD international conference on Management of data (2008). \
-[3] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "Algorithms for Efficiently Computing Structural Anonymity in Complex Networks." ACM Journal of Experimental Algorithmics (2023).  \
-[4] Hay, Michael, et al. "Anonymizing social networks." Computer science department faculty publication series (2007).\
-[5] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The effect of distant connections on node anonymity in complex networks." Scientific Reports 14.1 (2024): 1156. \
-[6] B. D. McKay and A. Piperno, "Practical graph isomorphism", Journal of Symbolic Computa-tion, vol. 60, no. 0, pp. 94–112 (2014). 
+[1] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The anonymization problem in social networks." arXiv preprint arXiv:2409.16163
+ (2024). doi: https://doi.org/10.48550/arXiv.2409.16163 \
+[2] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "A systematic comparison of measures for k-anonymity in networks." arXiv preprint arXiv:2407.02290 (2024). doi:  	
+https://doi.org/10.48550/arXiv.2407.02290 \
+[3] Liu, Kun, and Evimaria Terzi. "Towards identity anonymization on graphs." Proceedings of the 2008 ACM SIGMOD international conference on Management of data (2008). \
+[4] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "Algorithms for Efficiently Computing Structural Anonymity in Complex Networks." ACM Journal of Experimental Algorithmics (2023).  \
+[5] Hay, Michael, et al. "Anonymizing social networks." Computer science department faculty publication series (2007).\
+[6] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The effect of distant connections on node anonymity in complex networks." Scientific Reports 14.1 (2024): 1156. \
+[7] B. D. McKay and A. Piperno, "Practical graph isomorphism", Journal of Symbolic Computa-tion, vol. 60, no. 0, pp. 94–112 (2014). 
