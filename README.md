@@ -1,4 +1,4 @@
-# ANONET
+# ANO-NET
 This repository contains code measuring anonymity with various anonymity measrues and anonymizing networks with various heuristic algorithms.
 The repository accompanies the following research papers: [1, 2].
 
@@ -120,6 +120,20 @@ Various command line arguments can be used to indicate what to run, and to adjus
 		* [0 `Edge sampling`, 1 `Unique`,  2`Degree`, 3  `Affected`, 4 `Affected unique`, 5 `Affected unique only`]
 	* `-b [arg]`: set budget to arg (default -1: 0.1*|E|)
 	* `-u [arg]`: set recompute gap to arg (default -1: 0.1 * budget)
+
+# Citing ANO-NET
+To cite ANO-NET, please use the following reference: 
+
+ de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The anonymization problem in social networks." arXiv preprint arXiv:2409.16163
+ (2024). doi: https://doi.org/10.48550/arXiv.2409.16163 \
+ 
+@article{dejong2024anonymization,\
+  &nbsp;&nbsp;&nbsp;&nbsp; title={The anonymization problem in social networks},\
+  &nbsp;&nbsp;&nbsp;&nbsp; author={de Jong, Rachel G and van der Loo, Mark PJ and Takes, Frank W},\
+  &nbsp;&nbsp;&nbsp;&nbsp; journal={arXiv preprint arXiv:2409.16163},\
+  &nbsp;&nbsp;&nbsp;&nbsp; year={2024}\
+}
+
 
 # References
 [1] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The anonymization problem in social networks." arXiv preprint arXiv:2409.16163
