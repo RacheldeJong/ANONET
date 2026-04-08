@@ -1,6 +1,4 @@
 #include "hay.h"
-#include <functional>
-#include <iomanip>
 
 const cache_pair Hay::compute_value(Graph* g, const int v){
     int empty_int = 0;
@@ -35,13 +33,16 @@ const bool Hay::are_equivalent(Graph* g, const int v1, const int v2){
 }
 
 const long Hay::compute_difference(Graph* g, const int v1, const int v2){
-    // TODO: implement
-    return 0;
+    cache_pair val1 = compute_value(g, v1);
+    cache_pair val2 = compute_value(g, v2);
+    return compute_difference(g, val1, val2);
 }
 
+// Future work (TODO)
 const long Hay::compute_difference(Graph* g, cache_pair val1, cache_pair val2){
     // TODO: implement
-    return 0;
+    if(val1 == val2) return 0;
+    return DIFF_MAX_NORMALIZED;
 }
 
 // Given that a certain edge is deleted, get the set of nodes that are affected by the operation

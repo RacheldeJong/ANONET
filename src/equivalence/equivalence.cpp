@@ -6,7 +6,6 @@ std::vector< std::set<int> > EquivalencePartition::split_eclass(std::set<int> ec
     std::map<cache_pair, int> val_to_eq = {};
     cache_pair val;
     int ec_class;
-
     // No comparisons required
     if(eclass.size() == 1) {
         return {eclass};
@@ -88,7 +87,6 @@ void EquivalencePartition::compute_equivalence_partition(){
     std::vector<int> node_set;
     size_t i;
     int it_nr = 1;
-
     clock_t time_it, time_tot;
     // Start timer total time
     time_tot = clock();
@@ -120,7 +118,6 @@ void EquivalencePartition::compute_equivalence_partition(){
 
         // Compute equivalence classes by splitting each eq
         for(auto eq : ep_cur){
-
             for(auto it2 : split_eclass(eq)){
                 ep_new.push_back(it2);
             }
@@ -229,11 +226,10 @@ std::set<int> EquivalencePartition::update_node(const int node1, std::set<int> e
         }
         ec_cur = ec_notcomputed;
     }
-    // No EC found for node1
+   // No EC found for node1
     ep_entry = epartition.size();
     epartition.push_back({node1});
     node_to_ep_entry[node1] = ep_entry;
-    epartition[ep_entry];
     return epartition[ep_entry];
 }
 
@@ -276,6 +272,7 @@ void EquivalencePartition::update_nodes(std::set<int> nodes){
         distEPs[d_cur-1]->remove_nodes_from_ep(nodes);
     }
 
+    // remove_from_ep(nodes);
     std::set<int> all_nodes = g->get_nodes();
     std::set<int> ec_cur;
     // Find new position in EP
@@ -362,31 +359,14 @@ const void EquivalencePartition::print_info(){
     
     // Measure used
     std::cout<<"\tUsed measure: ";
-    if(meas_choice == MEAS_DEGREE) std::cout<<"Degree"<<std::endl;
-    else if(meas_choice == MEAS_DEGDIST) std::cout<<"Degree distribution"<<std::endl;
-    else if(meas_choice == MEAS_COUNT) std::cout<<"Count"<<std::endl;
-    else if(meas_choice == MEAS_HAY) std::cout<<"Hay"<<std::endl;
-    else if(meas_choice == MEAS_DKANON) std::cout<<"d-k-Anonymity"<<std::endl;
-    else if(meas_choice == MEAS_HYBRID) std::cout<<"Hybrid"<<std::endl;
-    else std::cout<<"none"<<std::endl;
+    print_measure(meas_choice, '\n');
 
     // Maximum distance
     std::cout<<"\tMaximum distance: "<<max_dist<<std::endl;
 
     // Heuristic used
     std::cout<<"\tHeuristic used: ";
-    if(heur_choice == MEAS_DEGREE) std::cout<<"Degree"<<std::endl;
-    else if(heur_choice == MEAS_DEGDIST) std::cout<<"Degree distribution"<<std::endl;
-    else if(heur_choice == MEAS_COUNT) std::cout<<"Count"<<std::endl;
-    else if(heur_choice == MEAS_HAY) std::cout<<"Hay"<<std::endl;
-    else if(heur_choice == MEAS_DKANON) std::cout<<"d-k-Anonymity"<<std::endl;
-    else if(heur_choice == MEAS_HYBRID) std::cout<<"Hybrid"<<std::endl;
-    else std::cout<<"none"<<std::endl;
-
-    // Twin nodes used
-    std::cout<<"\tTwin nodes used: ";
-    if(twin_heuristic == true) std::cout<<"true"<<std::endl;
-    else std::cout<<"false"<<std::endl;
+    print_measure(heur_choice, '\n');
 
     // Computed
     std::cout<<"\tEquivalence partition computed: ";
@@ -433,13 +413,15 @@ const std::vector<int> EquivalencePartition::get_node_to_anonymity(bool minustwi
 
 const void EquivalencePartition::print_equivalence_partition(){
     auto epartition_cur = epartition;
-    
+    std::cout<<"Start equivalence classes:"<<std::endl;
     for(auto eclass : epartition_cur){
         for(auto node :eclass){
             std::cout<<node<<", ";
         }
         std::cout<<std::endl;
     }
+    std::cout<<"End equivalence classes."<<std::endl;
+
 }
 
 const void EquivalencePartition::print_equivalence_distribution(bool minustwin){
@@ -473,7 +455,7 @@ const void EquivalencePartition::print_node_anonymity(bool minustwin){
     }
 }
 
-const std::set<int> EquivalencePartition::get_k_anonymous_nodes(const int k, const bool minustwin){
+const std::set<int> EquivalencePartition::get_non_k_anonymous_nodes(const int k, const bool minustwin){
     auto epartition_cur = epartition;
     std::set<int> k_nodes;
     std::map<int, int> anon_distr = get_anonymity_distribution(minustwin);
@@ -486,7 +468,7 @@ const std::set<int> EquivalencePartition::get_k_anonymous_nodes(const int k, con
     for(int node_id = 0; node_id < node_to_ep_entry.size(); node_id++){
         ep_entry = node_to_ep_entry[node_id];
         k_node = epartition_cur[ep_entry].size();
-        if(k_node <= k){
+        if(k_node < k){
             k_nodes.insert(node_id);
         }
     }
@@ -494,8 +476,8 @@ const std::set<int> EquivalencePartition::get_k_anonymous_nodes(const int k, con
     return k_nodes;
 }
 
-const double EquivalencePartition::get_frac_k_anonymous_nodes(const int k, const bool minustwin){
-    auto nodes = get_k_anonymous_nodes(k, minustwin);
+const double EquivalencePartition::get_frac_non_k_anonymous_nodes(const int k, const bool minustwin){
+    auto nodes = get_non_k_anonymous_nodes(k, minustwin);
     int nr_nodes = g->get_number_nodes();
     return double(nodes.size()) / nr_nodes;
 }
@@ -542,4 +524,8 @@ const void EquivalencePartition::print_runtimes(){
         cur_dist++;
     }
     std::cout<<"Runtime total: "<<runtime_tot<<std::endl;
+}
+
+const int EquivalencePartition::get_measure(){
+    return meas_choice;
 }

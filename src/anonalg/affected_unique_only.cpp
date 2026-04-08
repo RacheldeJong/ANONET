@@ -1,7 +1,7 @@
 #include "affected_unique_only.h"
 
 std::vector< std::pair<int, int> > AnonAffectedUniqueOnly::select_edges(Graph *g, EquivalencePartition *EP, 
-const int nr_edges){
+const std::set<int> non_anon_nodes, const int nr_edges){
     std::vector< std::pair<int, int> > unique_edges, selected_edges;
     auto edges = g->get_edges();
     std::vector<double> affected;
@@ -11,8 +11,6 @@ const int nr_edges){
     // Return all edges left if nr_edges too large
     if(nr_edges >= edges.size()) return edges;
 
-    auto unique_nodes = EP->get_k_anonymous_nodes(k-1, false);
-
     // Find edges that are connected to at least one unique node
     for(auto edge : edges){
         switch (variant)
@@ -20,8 +18,8 @@ const int nr_edges){
             // Select all edges connecting two unique nodes
             case VARIANT_AFFUNIQUE_UU:     
             case VARIANT_AFFUNIQUE_UU_NORM:
-                if (unique_nodes.find(edge.first) != unique_nodes.end() &&
-                unique_nodes.find(edge.second) != unique_nodes.end()){
+                if (non_anon_nodes.find(edge.first) != non_anon_nodes.end() &&
+                non_anon_nodes.find(edge.second) != non_anon_nodes.end()){
                     unique_edges.push_back(edge);
                 }
                 break;
@@ -29,8 +27,8 @@ const int nr_edges){
             case VARIANT_AFFUNIQUE_U:
             case VARIANT_AFFUNIQUE_U_NORM:
             default:
-                if (unique_nodes.find(edge.first) != unique_nodes.end() ||
-                unique_nodes.find(edge.second) != unique_nodes.end()){
+                if (non_anon_nodes.find(edge.first) != non_anon_nodes.end() ||
+                non_anon_nodes.find(edge.second) != non_anon_nodes.end()){
                     unique_edges.push_back(edge);
                 }
                 break;
@@ -68,7 +66,7 @@ const int nr_edges){
         result = {};
         aff_set = m.get_nodes_affected(g, edge.first, edge.second);
         // Overlap unique nodes, aff_set
-        std::set_intersection(aff_set.begin(), aff_set.end(), unique_nodes.begin(), unique_nodes.end(), std::inserter(result, result.begin()));
+        std::set_intersection(aff_set.begin(), aff_set.end(), non_anon_nodes.begin(), non_anon_nodes.end(), std::inserter(result, result.begin()));
         float value;
         switch (variant)
         {

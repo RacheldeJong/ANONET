@@ -1,8 +1,6 @@
 // main.cpp:
 // Author: Rachel de Jong
 // 
-// Last edited: 
-//
 
 #include "util.h"
 #include "graph/nauty_graph.h"
@@ -10,34 +8,58 @@
 #include "equivalence/equivalence.h"
 #include "anonalg/anonymization.h"
 #include "equivalence/cascade.h"
+#include "experiments/experiments.h"
+#include "equivalence/fuzzy.h"
+#include "ged/ged.h"
 
 std::string meas_options = "NONE 0, DEGREE 1 COUNT 2, DEGDIST 3, DKANON 4, HAY 5";
+std::string alg_options = "TODO";
 
+char *input_file;
 // Default settings
+
+// Mode
 bool use_menu = false;
 int cascade = 0;
 int anonymize = 0;
-int meas_main = MEAS_DKANON;
-int meas_main2 = MEAS_DKANON;
+bool experiment = false;
+
+// Experiments
+int experiment_choice = 0;
+
+// Measures
+int meas_main = MEAS_COUNT;
 int meas_heur = MEAS_DEGREE;
-int meas_heur2 = MEAS_DEGREE;
+
+// General settings
+int phi_val = 0;
 int distance = 1;
 int iterative = 1;
-int anon_alg = 0;
 int k = 2;
 int twin_uniqueness = 0;
-int budget = -1;
-int recompute_gap = -1;
+
+// Output settings
 int statistics = 0;
-char *input_file;
+bool print_altered = false; // Anonymization only
+bool print_ep = false;
+
+// Cascading
+int meas_main2 = MEAS_COUNT;
+int meas_heur2 = MEAS_DEGREE;
+
+// Anonymization
+int anon_alg = 0;
+int budget_perc = 5;
+int recompute_times = 10;
 
 void menu(){
     std::string option, input_file;
     bool menustart = true;
     int n, m;
+    int recompute_gap, budget_edges;
     SG_DECL(sg);
 
-    AnonymityCascade c = AnonymityCascade();
+    AnonymityCascade *c = NULL;
     EquivalencePartition *EP = NULL;
     Anonymization *a = NULL;
     Graph g;
@@ -46,12 +68,15 @@ void menu(){
 
     while(true){
         std::cout<<"Options:"<<std::endl;
+        std::cout<<"Step 1:"<<std::endl;
         std::cout<<"  I to read graph from input file"<<std::endl;
+        std::cout<<"Step 2: (optional)"<<std::endl;
+        std::cout<<"To change options use: D, OE, OC, OA"<<std::endl;
+        std::cout<<"  P to print graph\n"<<std::endl;
+        std::cout<<"Step 3: compute!"<<std::endl;
         std::cout<<"  E for computing partition"<<std::endl;
         std::cout<<"  C for anonymity cascade"<<std::endl;
         std::cout<<"  A for anonymization\n"<<std::endl;
-        std::cout<<"  P to print graph\n"<<std::endl;
-        std::cout<<"To change options use: D, OE, OC, OA"<<std::endl;
         std::cin>>option;
 
         // Input file
@@ -93,8 +118,8 @@ void menu(){
                 continue;
             }
             EquivalencePartition EP2 = EquivalencePartition(&g, std::make_pair(meas_main2, distance), meas_heur2);
-            c.anonymity_cascade(&g, EP, &EP2, twin_uniqueness, -1);
-            c.print_stats(2);
+            //c.anonymity_cascade(&g, &EP, &EP2, twin_uniqueness, -1);
+            //c.print_statistics();
         }
         else if(option == "A"){
             if(graph_status < 2){
@@ -106,9 +131,9 @@ void menu(){
                 std::cout<<"Error: EP is not initialized for current settings. Choose E."<<std::endl;
                 continue;
             }
-            if(budget == -1) budget = ceil(0.05 * g.get_number_edges());
-            if(recompute_gap == -1) recompute_gap = ceil(0.01 * budget);
-            if(a == NULL) a = new Anonymization(&g, EP, anon_alg, budget, recompute_gap);
+            budget_edges = ceil(budget_perc * g.get_number_edges());
+            recompute_gap = ceil(budget_edges / recompute_times);
+            if(a == NULL) a = new Anonymization(&g, EP, anon_alg, budget_edges, recompute_gap);
             a->anonymize();
             if(statistics > 1)a->print_info();
             a->print_statistics();
@@ -121,8 +146,6 @@ void menu(){
             g.print_graph();
         }
         else if(option == "S"){
-            
-            
             std::cout<<"Statistics mode [0, 1, 2]: ";
             std::cin>>statistics;
             change_settings = true;
@@ -132,6 +155,8 @@ void menu(){
             std::cin>>meas_main;
             std::cout<<"Anonymity measure: "<<meas_options<<" "<<std::endl;
             std::cin>>meas_heur;
+            std::cout<<"Level of uncertainty phi: [0 - 100]"<<std::endl;
+            std::cin>>phi_val;
 
             if((meas_main != MEAS_HAY && meas_main < meas_heur) || 
             (meas_main == MEAS_HAY && (meas_heur != MEAS_DEGREE && meas_heur != MEAS_HAY))){
@@ -164,15 +189,27 @@ void menu(){
         else if(option == "OA"){
             std::cout<<"Anonymization algorithm "<<std::endl;
             std::cin>>anon_alg;
-            std::cout<<"Budget: ";
-            std::cin>>budget;
-            std::cout<<"Recompute gap ";
+            std::cout<<"Budget%: ";
+            std::cin>>budget_edges;
+            std::cout<<"Recompute times";
             std::cin>>recompute_gap;
             if(a != NULL){
                 a->~Anonymization();
                 delete a;
-            } 
-            a = new Anonymization(&g, EP, anon_alg, budget, recompute_gap);
+            }
+            budget_edges = ceil(budget_perc * g.get_number_edges());
+            recompute_gap = ceil(budget_edges / recompute_times);
+       
+            a = new Anonymization(&g, EP, anon_alg, budget_edges, recompute_gap);
+            // Additional settings
+            if(phi_val != -1){
+                a->set_fuzzy_anon(phi_val, true, true);
+                if(meas_main != MEAS_COUNT){
+                    std::cout<<"WARNING: fuzzy-k-anonymity is currently only implemented for the COUNT measure ("<<MEAS_COUNT<<")"<<std::endl;
+                    std::cout<<"Change measure to COUNT, or regular anonymity is computed"<<std::endl;
+                }
+            }
+            a->set_twin_uniqueness(twin_uniqueness);
         }
         else if(option == "e"){
             break;
@@ -193,11 +230,6 @@ void parse_input(int argc, char *argv[]){
             anonymize = 1;
         }
         // Variables for all
-        // Input file
-        else if(strcmp(argv[i], "-i") == 0){
-            input_file = (argv[i + 1]);
-            i++;
-        }
         // Set distance
         else if(strcmp(argv[i], "-d") == 0){
             distance = atoi(argv[i+1]);
@@ -206,6 +238,11 @@ void parse_input(int argc, char *argv[]){
         // Set minimum value k
         else if(strcasecmp(argv[i], "-k") == 0){
             k = atoi(argv[i+1]);
+            i++;
+        } 
+        // Set uncertainty value (fuzzy anonymity)
+        else if(strcasecmp(argv[i], "-f") == 0){
+            phi_val = atoi(argv[i+1]);
             i++;
         } 
         // Set twin-uniqueness
@@ -217,6 +254,12 @@ void parse_input(int argc, char *argv[]){
         else if(strcasecmp(argv[i], "-s") == 0){
             statistics = atoi(argv[i+1]);
             i++;
+        }
+        else if(strcasecmp(argv[i], "-edges") == 0){
+            print_altered = true;
+        }
+        else if(strcasecmp(argv[i], "-ep") == 0){
+            print_ep = true;
         }
         // Equivalence partitions
         // Main measure
@@ -251,25 +294,30 @@ void parse_input(int argc, char *argv[]){
         }
         // How many edges to delete
         else if(strcasecmp(argv[i], "-b") == 0){
-            budget = atoi(argv[i+1]);
+            budget_perc = atoi(argv[i+1]);
             i++;
         }
         // Update after every recompute_gap edges
         else if(strcasecmp(argv[i], "-u") == 0){
-            recompute_gap = atoi(argv[i+1]);
+            recompute_times = atoi(argv[i+1]);
             i++;
+        }
+        else if(strcasecmp(argv[i], "-exp") == 0){
+            experiment = true;
+            experiment_choice = atoi(argv[i+1]);
         }
     }
 }
 
 // Main
 int main(int argc, char *argv[]){
-    // Initialize variables
+    // Step 1: Initialize variables
     SG_DECL(sg1);
     int m, n = 0;
+    int recompute_gap, budget_edges;
     char *input_file;
 
-    // Parse input and read graph
+    // Step 2: parse input and read graph
     if(argc > 1) parse_input(argc, argv);
 
     if(argv[1][0] != '-'){
@@ -279,36 +327,83 @@ int main(int argc, char *argv[]){
         sg1 = read_graph_from_file(input_file, n);
     }
 
+    // Menu mode
     if(use_menu){
         menu();
         return(0);
     }
 
+    // Step 3: read graph
     Graph g = Graph(sg1);
-    std::cout<<"|V|"<<g.get_number_nodes() <<" |E|: "<<g.get_number_edges()<<std::endl;
-
+    if(statistics > 0){
+        std::cout<<"Graph info"<<std::endl;
+        std::cout<<"|V|"<<g.get_number_nodes() <<" |E|: "<<g.get_number_edges()<<std::endl;
+    }
+    
+    // Step 4: compute equivalence
     EquivalencePartition ep = EquivalencePartition(&g, std::make_pair(meas_main, distance), meas_heur);
     
-    if(statistics > 1 || (!cascade && !anonymize))ep.print_info();
-    if(statistics > 0)ep.print_anonymity_distribution(twin_uniqueness);
-    if(statistics > 0)ep.print_equivalence_distribution(twin_uniqueness);
+    // Step 5: additional steps
+    // Optional: print ep information
+    // Always shown if this is the only step
+    if(phi_val == 0){
+        if(statistics > 0 || (!cascade && !anonymize)){
+            ep.print_info();
+            ep.print_anonymity_distribution(twin_uniqueness);
+        }
+        if(statistics>1){
+            //ep.print_statistics();
+        }
+        if(print_ep) ep.print_equivalence_partition();
+    }
+    else{ // Fuzzy k-anonymity
+        Ged ged = Ged(&g, &ep);
+        if(meas_main != MEAS_COUNT){
+            std::cout<<"Error: fuzzy is currently only implemented for COUNT ["<<MEAS_COUNT<<"]"<<std::endl;
+            std::cout<<"Exiting program."<<std::endl;
+            exit(1);
+        }
+        FuzzyEP fuzzy = FuzzyEP(&g, &ep, &ged, phi_val);
+        if(statistics > 0 || (!cascade && ! anonymize)){
+            fuzzy.print_info();
+            fuzzy.print_fuzzy_distribution();
+        }
+        if(statistics>1){
+            fuzzy.print_statistics();
+        }
+        if(print_ep) fuzzy.print_node_to_equivalent();
+    }
+    
+    // Option 2: Perform cascading and print results
     if(cascade){
         EquivalencePartition ep2 = EquivalencePartition(&g, std::make_pair(meas_main2, distance), meas_heur2);
-        AnonymityCascade c = AnonymityCascade();
-        c.anonymity_cascade(&g, &ep, &ep2);
+        AnonymityCascade c = AnonymityCascade(&g, &ep, &ep2);
+        c.print_info();
         std::cout<<"Cascading results:"<<std::endl;
         c.print_stats(statistics);
     }
+
+    // Option 3: anonymization
     if(anonymize){
-        if(budget == -1) budget = ceil(0.1 * g.get_number_edges());
-        if(recompute_gap == -1) recompute_gap = ceil(0.1 * budget);
-        Anonymization a = Anonymization(&g, &ep, anon_alg, budget, recompute_gap);
-        a.anonymize();
-        if(statistics > 1)a.print_info();
-        a.print_statistics();
+        budget_edges = ceil((float)budget_perc/100 * g.get_number_edges());
+        recompute_gap = ceil(budget_edges / recompute_times);
+        
+        Anonymization anon = Anonymization(&g, &ep, anon_alg, budget_edges, recompute_gap);
+        if(phi_val != 0){
+            anon.set_fuzzy_anon(phi_val, true, true);
+        }
+        anon.anonymize();
+        if(statistics > 1)anon.print_info();
+        anon.print_statistics();
+        if(print_altered) anon.print_altered_edges();
     }
 
+    // Option 4: experiment mode
+    if(experiment){
+        do_experiment(experiment_choice, input_file, sg1);
+    }
+
+    // End program
     SG_FREE(sg1);
-    
     return 0;
 }

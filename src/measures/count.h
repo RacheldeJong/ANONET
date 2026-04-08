@@ -24,7 +24,7 @@ class Count : public Measure{
 
         void init(Graph *g){
             int n = g->get_number_nodes();
-            int m = g->get_number_edges();
+            int m = g->get_number_edges() * 2;
             subgraph = new sparsegraph;
             SG_INIT(*subgraph);
             SG_ALLOC(*subgraph, n, m, "malloc");
@@ -50,6 +50,7 @@ class Count : public Measure{
             Compute the value for node v
         */
         const cache_pair compute_value(Graph* g, const int v);
+        const long get_int_value(cache_pair val);
 
         /*
             Determine if values for two nodes are equivalent

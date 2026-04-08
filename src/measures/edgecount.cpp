@@ -1,8 +1,9 @@
 #include "edgecount.h"
 
+// Determine whether two nodes are equivalent
 const bool Edgecount::are_equivalent(Graph* g, const int v1, const int v2){
-    cache_pair val1 = compute_value(g, v1);
-    cache_pair val2 = compute_value(g, v2);
+    auto val1 = compute_value(g, v1);
+    auto val2 = compute_value(g, v2);
     return are_equal(val1, val2);
 }
 
@@ -16,17 +17,16 @@ const cache_pair Edgecount::compute_value(Graph* g, const int v){
 }
 
 const long Edgecount::compute_difference(Graph* g, const int v1, const int v2){
-    std::map<int, int> empty_map;
     cache_pair val1 = compute_value(g, v1);
     cache_pair val2 = compute_value(g, v2);
-    long diff = abs(val1.first - val2.first);
-    return diff;
+    return compute_difference(g, val1, val2);
 }
 
+// Future work (TODO)
 const long Edgecount::compute_difference(Graph* g, cache_pair val1, cache_pair val2){
-    std::map<int, int> empty_map;
-    long diff = abs(val1.first - val2.first);
-    return diff;
+    // TODO: implement
+    if(val1 == val2) return 0;
+    return DIFF_MAX_NORMALIZED;
 }
 
 // Given that a certain edge is deleted, get the set of nodes that are affected by the operation

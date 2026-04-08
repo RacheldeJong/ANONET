@@ -1,7 +1,7 @@
 #include "affected_unique.h"
 
 std::vector< std::pair<int, int> > AnonAffectedUnique::select_edges(Graph *g, EquivalencePartition *EP, 
-const int nr_edges){
+    const std::set<int> non_anon_nodes, const int nr_edges){
     std::vector< std::pair<int, int> > selected_edges;
     auto edges = g->get_edges();
     std::vector<double> affected;
@@ -10,8 +10,6 @@ const int nr_edges){
 
     // Return all edges left if nr_edges too large
     if(nr_edges >= edges.size()) return edges;
-
-    auto unique_nodes = EP->get_k_anonymous_nodes(k-1, false);
 
     std::set<std::pair<int, int>> chosen_edges;
     std::random_device rd;
@@ -25,7 +23,7 @@ const int nr_edges){
         result = {};
         aff_set = m.get_nodes_affected(g, edge.first, edge.second);
         // Overlap unique nodes, aff_set
-        std::set_intersection(aff_set.begin(), aff_set.end(), unique_nodes.begin(), unique_nodes.end(), std::inserter(result, result.begin()));
+        std::set_intersection(aff_set.begin(), aff_set.end(), non_anon_nodes.begin(), non_anon_nodes.end(), std::inserter(result, result.begin()));
         float value;
         switch (variant)
         {

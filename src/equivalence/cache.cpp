@@ -17,6 +17,19 @@ cache_pair Cache::get_cache_entry(const int v){
     return cache[v];
 }
 
+long Cache::get_cache_entry_int_value(const int v){
+    cache_pair val;
+    if(cache.find(v) == cache.end()){
+        val = eq_measure.compute_value(g, v);
+        vals_computed++;
+        cache.insert(std::make_pair(v, val));
+    }
+    else{
+        val = cache[v];
+    }
+    return eq_measure.get_int_value(val);
+}
+
 cache_pair Cache::get_cache_entry_computed(const int v){
     if(cache.find(v) == cache.end())
         return EMPTY_CACHE_PAIR;

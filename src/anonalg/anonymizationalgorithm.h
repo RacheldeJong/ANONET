@@ -18,6 +18,9 @@
 
 #define VARIANT_DEFAULT 0
 
+// TODO: do we need this?
+#define HEUR_DEFAULT -1
+
 #include "../util.h"
 #include "../graph/nauty_graph.h"
 #include "../equivalence/equivalence.h"
@@ -25,6 +28,7 @@
 void print_alg(const int meas_choice, const int variant=0, char end='\n');
 
 class AnonymizationAlgorithmInterface {
+    private:
     
     public:
 
@@ -34,17 +38,18 @@ class AnonymizationAlgorithmInterface {
         std::vector<int> variants;
 
 
-        virtual const std::vector< std::pair<int, int> > select_edges(Graph *g, EquivalencePartition *EP, const int nr_edges){
+        virtual std::vector< std::pair<int, int> > select_edges(Graph *g, EquivalencePartition *EP, 
+            const std::set<int> non_anon_nodes, const int nr_edges){
             return g->get_edges();
         };
 
-        virtual const void set_k(const int k_){};
+        virtual void set_k(const int k_){};
 
-        virtual const void set_variant(const int variant_){};
+        virtual void set_variant(const int variant_){};
 
-        virtual const void update(Graph *g, EquivalencePartition EP){};
+        virtual void update(Graph *g, EquivalencePartition EP){};
         
-        virtual const std::vector<int> get_variants(){return variants;};
+        virtual std::vector<int> get_variants(){return variants;};
 
         virtual ~AnonymizationAlgorithmInterface() {};
 };
@@ -80,8 +85,8 @@ class Anonymizationalgorithm {
         /*
             Select the edges
         */
-        virtual std::vector< std::pair<int, int> > select_edges(Graph *g, EquivalencePartition *EP, const int nr_edges){
-            return anonalg->select_edges(g, EP, nr_edges);
+        virtual std::vector< std::pair<int, int> > select_edges(Graph *g, EquivalencePartition *EP, const std::set<int> non_anon_nodes, const int nr_edges){
+            return anonalg->select_edges(g, EP, non_anon_nodes, nr_edges);
         };
 
         /*

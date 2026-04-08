@@ -15,6 +15,9 @@
 #include <time.h>
 #include <iostream>
 #include <random>
+#include <bits/stdc++.h>
+#include <functional>
+#include <iomanip>
 
 #define OP_DELETE 0
 #define OP_ADD 1

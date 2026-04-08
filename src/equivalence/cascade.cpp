@@ -54,7 +54,7 @@ std::set<int> AnonymityCascade::get_unique_nodes(Graph *g, std::map< int, std::s
     return unique_nodes;
 }
 
-std::set<int> AnonymityCascade::anonymity_cascade(Graph *g, EquivalencePartition *EP1, EquivalencePartition *EP2, bool twinnodes, const int level){
+std::set<int> AnonymityCascade::anonymity_cascade(){
     auto node_to_ep2 = EP2->get_node_to_ep_entry();
     std::map< int, std::set<int> > eq_dist;
     std::vector<int> unique_check(g->get_number_nodes(), 0);
@@ -70,7 +70,7 @@ std::set<int> AnonymityCascade::anonymity_cascade(Graph *g, EquivalencePartition
     time_tot = clock();
 
     // Get unique nodes
-    unique_all = EP1->get_k_anonymous_nodes(K_UNIQUE, twinnodes);
+    unique_all = EP1->get_non_k_anonymous_nodes(K_UNIQUE, twinnodes);
     for(auto node : unique_all){
         unique_it.push(node);
         unique_check[node] = 1;
@@ -106,52 +106,20 @@ std::set<int> AnonymityCascade::anonymity_cascade(Graph *g, EquivalencePartition
     runtime_tot = ((double)(clock() - (double)time_tot))/CLOCKS_PER_SEC;
     return unique_all;
 }
-
-std::set<int> AnonymityCascade::subgraph_cascade(Graph *g, EquivalencePartition *EP1, EquivalencePartition *EP2, bool twinnodes, const int level){
-    // Initial anonymity
-    std::map< std::pair<int, int>, int> casc_dict;
-    auto node_to_ep = EP1->get_node_to_ep_entry();
-    int ep_id1, ep_id2;
-    std::set<int> unique_set;
-    int k_value;
-
-    // Get occurrence pairs ep - ep
-    for(auto edge : g->get_edges()){
-        ep_id1 = node_to_ep[edge.first];
-        ep_id2 = node_to_ep[edge.second];
-        casc_dict[std::make_pair(ep_id1, ep_id2)] += 1;
-    }
-
-    for(auto edge : g->get_edges()){
-        ep_id1 = node_to_ep[edge.first];
-        ep_id2 = node_to_ep[edge.second];
-        k_value = casc_dict[std::make_pair(ep_id1, ep_id2)];
-
-        if(k_value == 1){
-            unique_set.insert(ep_id1);
-            unique_set.insert(ep_id2);
-        }
-    }
-    return unique_set;
-}
-
-std::set<int> AnonymityCascade::anonymity_cascade(Graph *g, EquivalencePartition *EP, const bool twinnodes, const int level){
-    return anonymity_cascade(g, EP, EP, twinnodes, level);
-}
-
 const void AnonymityCascade::print_info(){
-    std::cout<<"Starting measure: "<<std::endl;
-    std::cout<<"Cascade measure: "<<std::endl;
-    std::cout<<"Maximum distance: "<<std::endl;
+    std::cout<<"Cascade info"<<std::endl;
+    std::cout<<"\tStarting measure: ";
+    print_measure( EP1->get_measure(), '\n');
+    std::cout<<"\tCascade measure: ";
+    print_measure( EP2->get_measure(), '\n');
+    std::cout<<"\tMaximum cascade distance: "<<max_level<<std::endl;
 }
 
 const void AnonymityCascade::print_stats(const int stat){
     
-    if(stat >= 1){
-        std::cout<<"Unique nodes per level:"<<std::endl;
-        for(int i= 0; i < unique_level.size(); i++){
-            std::cout<<"Unique nodes level "<<i<<": "<<unique_level[i]<<std::endl;
-        }
+    std::cout<<"Unique nodes per level:"<<std::endl;
+    for(int i= 0; i < unique_level.size(); i++){
+        std::cout<<"Unique nodes level "<<i<<": "<<unique_level[i]<<std::endl;
     }
     std::cout<<"Unique nodes total: "<<unique_count<<std::endl;
     if(stat >=2){

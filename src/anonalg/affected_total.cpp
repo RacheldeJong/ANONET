@@ -1,7 +1,7 @@
 #include "affected_total.h"
 
 std::vector< std::pair<int, int> > AnonAffectedTotal::select_edges(Graph *g, EquivalencePartition *EP, 
-const int nr_edges){
+const std::set<int> non_anon_nodes, const int nr_edges){
     std::vector< std::pair<int, int> > selected_edges;
     auto edges = g->get_edges();
     std::vector<int> affected;

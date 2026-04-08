@@ -15,13 +15,14 @@ const bool Degree::are_equivalent(Graph* g, const int v1, const int v2){
 }
 
 const long Degree::compute_difference(Graph* g, const int v1, const int v2){
-    long val = abs(g->get_degree(v1) - g->get_degree(v2)); 
-    return val;
+    auto val1 = compute_value(g, v1);
+    auto val2 = compute_value(g, v2);
+    return compute_difference(g, val1, val2);
 }
 
 const long Degree::compute_difference(Graph* g, cache_pair val1, cache_pair val2){
-    long val = abs(val1.first - val2.first); 
-    return val;
+    if(val1 == val2) return 0;
+    return DIFF_MAX_NORMALIZED;
 }
 
 const std::set<int> Degree::get_nodes_affected(Graph* g, const int source, const int target){

@@ -6,7 +6,7 @@ OUTPUTDIR = bin
 SRCDIR = src
 NAUTYDIR=../
 # Source files
-SRCFILES = main.cpp $(wildcard $(SRCDIR)/anonalg/*.cpp) $(wildcard $(SRCDIR)/equivalence/*.cpp) $(wildcard $(SRCDIR)/graph/*.cpp) $(wildcard $(SRCDIR)/measures/*.cpp )
+SRCFILES = main.cpp $(wildcard $(SRCDIR)/anonalg/*.cpp) $(wildcard $(SRCDIR)/equivalence/*.cpp) $(wildcard $(SRCDIR)/graph/*.cpp) $(wildcard $(SRCDIR)/measures/*.cpp ) $(wildcard $(SRCDIR)/ged/*.cpp ) $(wildcard $(SRCDIR)/experiments/*.cpp )
 SRCFILES := $(patsubst $(SRCDIR)/%,%,$(SRCFILES))
 # Where to find source files
 vpath %.cpp $(SRCDIR)
@@ -34,7 +34,7 @@ $(OUTPUTDIR)/anonet: $(OBJECTS)
 # Output directory
 $(OUTPUTDIR):
 	mkdir -p $(OUTPUTDIR)
-	mkdir -p $(OUTPUTDIR)/anonalg $(OUTPUTDIR)/equivalence $(OUTPUTDIR)/graph $(OUTPUTDIR)/measures
+	mkdir -p $(OUTPUTDIR)/anonalg $(OUTPUTDIR)/equivalence $(OUTPUTDIR)/experiments $(OUTPUTDIR)/ged $(OUTPUTDIR)/graph $(OUTPUTDIR)/measures $(OUTPUTDIR)/tests
 
 
 # Object files (automatic generation of dependencies)

@@ -83,6 +83,7 @@ class EquivalencePartition{
 
       /* 
          Help function for update
+         TODO: implement
       */
       void update_nodes(std::set<int> nodes);
       std::set<int> update_node(const int node, std::set<int> ec_cur);
@@ -94,16 +95,16 @@ class EquivalencePartition{
          edges.
       */
       int update_count;
+      //void update_eq_entry(Graph & g, const int v);
+      //void update_heuristic_entry(Graph & g, const int v);
 
       /* 
          Constructor: using initial EP computed internally
          NOTE: USED IN CLASS ONLY
       */
       EquivalencePartition(Graph* g_, std::vector< std::set<int> > ep_initial_, std::pair<int, int> meas_choice_, int heur_choice_) 
-      : ep_initial(ep_initial_), cache(g_, meas_choice_), g(g_){
+      : ep_initial(ep_initial_), cache(g_, meas_choice_), g(g_), meas_choice(meas_choice_.first), heur_choice(heur_choice_){
          max_dist = 1;
-         meas_choice = meas_choice_.first;
-         heur_choice = heur_choice_;
          iterative_computation = false;
          twin_heuristic = false;
          update_count  = 0;
@@ -111,10 +112,8 @@ class EquivalencePartition{
       };
 
       EquivalencePartition(Graph* g_, std::vector< std::set<int> > ep_initial_, int meas_choice_, int heur_choice_) 
-      : ep_initial(ep_initial_), cache(g_, meas_choice_), g(g_){
+      : ep_initial(ep_initial_), cache(g_, meas_choice_), g(g_), meas_choice(meas_choice_), heur_choice(heur_choice_) {
          max_dist = 1;
-         meas_choice = meas_choice_;
-         heur_choice = heur_choice_;
          iterative_computation = false;
          twin_heuristic = false;
          update_count = 0;
@@ -129,7 +128,6 @@ class EquivalencePartition{
       EquivalencePartition(Graph* g_, int meas_choice_ = 0, int heur_choice_=0) : cache(g_, meas_choice_), g(g_),
       meas_choice(meas_choice_), heur_choice(heur_choice_){
          max_dist = 1;
-           
          // Default: Heuristic choice depends on measure choice
          ep_initial = {};
          iterative_computation = true;
@@ -142,15 +140,11 @@ class EquivalencePartition{
       EquivalencePartition(Graph* g_, std::pair<int, int> meas_choice_, int heur_choice_=0) : 
       cache(g_, meas_choice_), g(g_), meas_choice(meas_choice_.first), max_dist(meas_choice_.second),
       heur_choice(heur_choice_){
-         meas_choice = meas_choice_.first;
-         max_dist = meas_choice_.second;
-
          // Default: Heuristic choice depends on measure choice
          ep_initial = {};
          iterative_computation = true;
          twin_heuristic = true;
          update_count = 0;
-
          compute_equivalence_partition();
       };
 
@@ -161,7 +155,7 @@ class EquivalencePartition{
 
       /* 
          Cache stores all computed values for nodes
-         public: to get statistics
+         For now public: to get statistics
       */
       Cache cache;
 
@@ -170,7 +164,6 @@ class EquivalencePartition{
       */
       void update_ep();
 
-        
       /* 
          Returns EP for the graph and measure given to constructor
       */
@@ -210,15 +203,21 @@ class EquivalencePartition{
       const std::vector<int> get_node_to_ep_entry();
       
       /*
-         Get vector with for each node its anonymity (value for k)
+         TODO
       */
       const std::vector<int> get_node_to_anonymity(bool minustwin=false);
 
       /*
          Returns a set of nodes such that they are at most k-anonymous.
       */
-      const std::set<int> get_k_anonymous_nodes(const int k, const bool minustwin);
-      const double get_frac_k_anonymous_nodes(const int k, const bool minustwin);
+      const std::set<int> get_non_k_anonymous_nodes(const int k, const bool minustwin);
+      const double get_frac_non_k_anonymous_nodes(const int k, const bool minustwin);
+
+      /*  
+         After altering the graph, update the equivalence class
+         TODO: pass either a single node or a set of node, itereate over them to update
+      */
+      // void update_equivalence_class(const Graph & g, const int v);
 
       /*
          Print functions:
@@ -241,6 +240,7 @@ class EquivalencePartition{
       */
       const void print_runtimes();
 
+      
       /*
          Get and print anonymity distribution. This indicates how many nodes are at most k-anonymous.
          If use_twin=false, the non-representative twin nodes are removed from the equivalence partition
@@ -259,6 +259,7 @@ class EquivalencePartition{
       */
       void set_twin_heuristic(const bool value);
       void set_iterative(const bool value);
+      const int get_measure();
       const bool get_twin_heuristic();
       const bool get_iterative();
 };

@@ -112,7 +112,7 @@ class Cache{
     public:
         
         /*
-            Measure used
+            TMP: move to private
         */
         Measure eq_measure;
 
@@ -141,6 +141,7 @@ class Cache{
             Returns the cache value for node v
         */
         cache_pair get_cache_entry(const int v);
+        long get_cache_entry_int_value(const int v);
 
         /*
             Returns the cache value for node v

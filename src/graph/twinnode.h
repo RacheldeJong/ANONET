@@ -2,8 +2,6 @@
 //
 // Contains code to find twin nodes and keep track of the twinnode map
 //
-// Last edited: dd-mm-2023
-//
 
 #ifndef TWINNODE
 #define TWINNODE

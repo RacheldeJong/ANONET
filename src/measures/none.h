@@ -7,6 +7,7 @@
 
 #include "measure.h"
 
+// TODO implements or something to allow easy switching between different measures
 class None : public Measure{
 
     private:

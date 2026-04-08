@@ -5,8 +5,6 @@
 // - Random graph
 // - From file)
 // 
-// Last edited: 11-5-2021
-//
 
 #ifndef GRAPHGEN_H
 #define GRAPGEN_H

@@ -1,7 +1,7 @@
 #include "degree.h"
 
 std::vector< std::pair<int, int> > AnonDegree::select_edges(Graph *g, EquivalencePartition *EP, 
-const int nr_edges){
+    const std::set<int> non_anon_nodes, const int nr_edges){
     std::vector< std::pair<int, int> > unique_edges, selected_edges;
     auto edges = g->get_edges();
     std::vector<double> probabilities;

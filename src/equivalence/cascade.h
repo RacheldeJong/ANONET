@@ -25,7 +25,20 @@ class AnonymityCascade{
         std::vector<int> unique_level;
         int unique_count=0;
 
+        Graph *g;
+        EquivalencePartition *EP1, *EP2;
+        int max_level;
+        bool twinnodes;
+
     public:
+        AnonymityCascade(Graph *g_, EquivalencePartition *EP1_, EquivalencePartition *EP2_, 
+            bool twinnodes_=false, const int level=-1) : g(g_), EP1(EP1_), EP2(EP2_), twinnodes(twinnodes_), max_level(level){
+                anonymity_cascade();
+            };
+        AnonymityCascade(Graph *g_, EquivalencePartition *EP, int level) : g(g_), EP1(EP), EP2(EP), twinnodes(false),
+        max_level(level){};
+        AnonymityCascade(Graph *g_, EquivalencePartition *EP) : g(g_), EP1(EP), EP2(EP), twinnodes(false),
+        max_level(-1){};
 
         /*
             Perform anonymity-cascade. EP1 is used to find the starting nodes.
@@ -34,9 +47,8 @@ class AnonymityCascade{
             identified given the EP(s).
 
         */
-        std::set<int> anonymity_cascade(Graph *g, EquivalencePartition *EP1, EquivalencePartition *EP2, bool twinnodes, const int level=-1);
-        std::set<int> anonymity_cascade(Graph *g, EquivalencePartition *EP, bool twinnodes, const int level=-1);
-        std::set<int> subgraph_cascade(Graph *g, EquivalencePartition *EP1, EquivalencePartition *EP2, bool twinnodes, const int level);
+        std::set<int> anonymity_cascade();
+
 
         const void print_info();
 

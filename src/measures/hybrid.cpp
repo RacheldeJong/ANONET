@@ -50,14 +50,15 @@ const bool Hybrid::are_equivalent(Graph* g, const int v1, const int v2){
     return are_equal(val1, val2);
 }
 
-// TODO
 const long Hybrid::compute_difference(Graph* g, const int v1, const int v2){
-    return 0;
+    cache_pair val1 = compute_value(g, v1);
+    cache_pair val2 = compute_value(g, v2);
+    return compute_difference(g, val1, val2);
 }
 
 const long Hybrid::compute_difference(Graph* g, cache_pair val1, cache_pair val2){
-    // TODO
-    return 0;
+    // TODO: implement for degree distribution
+    return DIFF_MAX_NORMALIZED;
 }
 
 // Given that a certain edge is deleted, get the set of nodes that are affected by the operation

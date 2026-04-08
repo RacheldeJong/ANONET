@@ -18,6 +18,8 @@
 #define MEAS_HYBRID 6
 #define MEAS_EDGECOUNT 7
 
+#define DIFF_MAX_NORMALIZED 100
+
 // Set default heuristic for measure
 #define HEUR_NONE MEAS_NONE
 #define HEUR_DEGREE MEAS_NONE
@@ -27,6 +29,9 @@
 #define HEUR_HAY MEAS_DEGREE
 #define HEUR_HYBRID MEAS_HAY
 #define HEUR_EDGECOUNT MEAS_NONE
+
+// TODO: do we need these?
+#define HEUR_DEFAULT -1
 
 #include "../util.h"
 #include "../graph/nauty_graph.h"
@@ -40,6 +45,10 @@ class MeasureInterface {
             std::map<int, int> empty_map = {};
             int empty_val = -1;
             return std::make_pair(empty_val, empty_map);
+        };
+
+        virtual const long get_int_value(cache_pair val){
+            return 0;
         };
 
         virtual const bool are_equivalent(Graph* g, const int v1, int v2){
@@ -89,6 +98,13 @@ class Measure {
             return meas->compute_value(g, v);
         }; 
         
+        /*
+            Compute a single integer value
+        */
+        virtual const long get_int_value(cache_pair val){
+            return meas->get_int_value(val);
+        };
+
         /*
             Determine if values for two nodes are equivalent
         */

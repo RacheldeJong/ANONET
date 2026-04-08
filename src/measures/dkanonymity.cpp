@@ -8,9 +8,8 @@ const bool dkAnonymity::are_equivalent(Graph* g, const int v1, const int v2){
 
 const cache_pair dkAnonymity::compute_value(Graph* g, const int v){
     int n = g->get_number_nodes();
-    int m = g->get_number_edges();
+    int m = g->get_number_edges() * 2;
     std::map<int, int> empty_map;
-
     static DEFAULTOPTIONS_SPARSEGRAPH(options);
     options.getcanon = TRUE;
 
@@ -28,15 +27,14 @@ const cache_pair dkAnonymity::compute_value(Graph* g, const int v){
 }
 
 const long dkAnonymity::compute_difference(Graph* g, const int v1, const int v2){
-    std::map< int, int> emptymap = {};
-    int empty_int = -1;
-    // TODO: implement
-    return 0;
+    cache_pair val1 = compute_value(g, v1);
+    cache_pair val2 = compute_value(g, v2);
+    return compute_difference(g, val1, val2);
 }
 
 const long dkAnonymity::compute_difference(Graph* g, cache_pair val1, cache_pair val2){
-    long val = abs(val1.first - val2.first); 
-    return val;
+    if(val1 == val2) return 0;
+    return DIFF_MAX_NORMALIZED;
 }
 
 const std::set<int> dkAnonymity::get_nodes_affected(Graph* g, const int source, const int target){

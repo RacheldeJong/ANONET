@@ -1,7 +1,4 @@
 #include "degdist.h"
-#include "edgecount.h"
-#include <functional>
-#include <iomanip>
 
 const cache_pair Degdist::compute_value(Graph* g, const int v){
     std::map< int, int> deg_dist;
@@ -36,59 +33,14 @@ const bool Degdist::are_equivalent(Graph* g, const int v1, const int v2){
 }
 
 const long Degdist::compute_difference(Graph* g, const int v1, const int v2){
-    std::map<int, int> empty_map = {};
-
-    // Get degree distribution d-neighborhood
     auto val1 = compute_value(g, v1);
     auto val2 = compute_value(g, v2);
-    
     return compute_difference(g, val1, val2);
 }
 
 const long Degdist::compute_difference(Graph* g, cache_pair val1, cache_pair val2){
-    // Initialize values
-    auto it1 = val1.second.crbegin();
-    auto it2 = val2.second.crbegin();
-    int deg1 = it1->first;
-    int deg2 = it2->first;
-    int count1 = it1->second;
-    int count2 = it2->second;
-    long diff = 0;
-
-    // Compute difference
-    while(it1 != val1.second.crend() && it2 != val2.second.crend()){
-
-        if(count1 > count2){
-            diff += count2 * abs(deg1 - deg2);
-            count1 -= count2;
-            it2++; deg2 = it2->first; count2 = it2->second;
-        }
-        else if(count2 > count1){
-            diff += count1 * abs(deg1 - deg2);
-            count2 -= count1;
-            it1++; deg1 = it1->first; count1 = it1->second;
-        }
-        else{
-            diff += count1 * abs(deg1 - deg2);
-            it1++; deg1 = it1->first; count1 = it1->second;
-            it2++; deg2 = it2->first; count2 = it2->second;
-        }
-    }
-
-    // Remainder difference; if out of values
-    while(it1 != val1.second.crend()){
-        diff += it1->first * count1;
-        it1++;
-        count1 = it1->second;
-    }
-
-    while(it2 != val2.second.crend()){
-        diff += it2->first * count2;
-        it2++;
-        count2 = it2->second;
-    }
-
-    return diff;
+    if(val1 == val2) return 0;
+    return DIFF_MAX_NORMALIZED;
 }
 
 const std::set<int> Degdist::get_nodes_affected(Graph* g, const int source, const int target){

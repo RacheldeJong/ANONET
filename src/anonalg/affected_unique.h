@@ -15,8 +15,8 @@ class AnonAffectedUnique : public Anonymizationalgorithm{
         /*
             Select edges
         */
-        std::vector< std::pair<int, int> > select_edges(Graph *g, 
-            EquivalencePartition *EP, const int nr_edges);
+        std::vector< std::pair<int, int> > select_edges(Graph *g, EquivalencePartition *EP, 
+        const std::set<int> non_anon_nodes, const int nr_edges);
         
         void update(Graph *g, EquivalencePartition *EP){};
         std::vector<int> get_variants(){return variants;};

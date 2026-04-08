@@ -69,16 +69,6 @@ class Graph{
             
 
         };
-
-        Graph(int bloep){
-            graph = get_empty_graph(1);
-            directed = true;
-            for(int i = 0; i < graph.nv; i++) nodes.insert(i);
-            twin_init = false;
-
-            
-
-        };
         Graph(const std::string input_file){
             const char * input_file_ = input_file.c_str();
             int n = read_n(input_file_);

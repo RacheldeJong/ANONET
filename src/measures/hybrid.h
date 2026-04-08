@@ -29,7 +29,7 @@ class Hybrid : public Measure{
 
         void init(Graph *g){
             int n = g->get_number_nodes();
-            int m = g->get_number_edges();
+            int m = g->get_number_edges() * 2;
             subgraph = new sparsegraph;
             cansubgraph = new sparsegraph;
             SG_INIT(*subgraph);

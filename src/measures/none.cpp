@@ -33,3 +33,5 @@ const void None::print_val_measure(const cache_pair val){
 const bool None::are_equal(const cache_pair val1, const cache_pair val2){
     return val1.first == val2.first;
 }
+
+

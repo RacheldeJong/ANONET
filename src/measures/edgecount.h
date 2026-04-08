@@ -21,7 +21,7 @@ class Edgecount : public Measure{
 
         void init(Graph *g){
             int n = g->get_number_nodes();
-            int m = g->get_number_edges();
+            int m = g->get_number_edges() * 2;
             subgraph = new sparsegraph;
             SG_INIT(*subgraph);
             SG_ALLOC(*subgraph, n, m, "malloc");
