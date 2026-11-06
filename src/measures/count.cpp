@@ -40,7 +40,7 @@ const long Count::compute_difference(Graph* g, cache_pair val1, cache_pair val2)
     // If n or m equals 0, diff_normalized = DIFF_MAX_NORMALIZED
     if(diffn == 0) diffn_normalized = 0;
     else if(n1 > 0) diffn_normalized = std::max(1.0, ceil((double)diffn / n1 * 100));
-    else diffn_normalized == DIFF_MAX_NORMALIZED;
+    else diffn_normalized = DIFF_MAX_NORMALIZED;
 
     if(diffm == 0) diffm_normalized = 0;
     else if(m1 > 0) diffm_normalized = std::max(1.0, ceil((double)diffm / m1 * 100));
