@@ -1,16 +1,16 @@
 # ANO-NET
 This repository contains code to measure anonymity and improve anonymity in networks using multiple anonymity measures and heuristic anonymization algorithms.
-The repository accompanies the following research papers: [1, 2].
+The repository accompanies the following research papers: [1, 2, 3].
 
 # What this code does:
 * Measure (fuzzy-)$k$-anonymity in networks.
-* Perform anonymity-cascade (described in [6]).
+* Perform anonymity-cascade (described in [7]).
 * Apply anonymization algorithms.
 
 # How to run
 
 ## Installation
-Before using this code, the nauty framework [7] should be downloaded from: https://users.cecs.anu.edu.au/~bdm/nauty/
+Before using this code, the nauty framework [8] should be downloaded from: https://users.cecs.anu.edu.au/~bdm/nauty/
 
 Clone this repository (ANONET) in the downloaded nauty directory (nauty27r3).
 To install Nauty run `./configure` and `./make` in the folder.
@@ -68,14 +68,14 @@ Start equivalence classes:
 End equivalence classes.
 ```
 
-### 2. Fuzzy equivalence class.
+### 2. Fuzzy anonymity.
 To compute fuzzy-k-anonymity, add argument `-f [val]` with percentage in range `0-100`.
 The following runs fuzzy-k-anonymity while allowing for 100% difference.
 ```
 ./bin/anonet ./examples/example4 -f 100 -ep
 ```
 This results in the following output. Note: since the fuzzy measure for anonymity is not symmetric, this mode prints for each node to which set of nodes it is phi-similar.
-> **Warning:** fuzziness is currently only implemented for the count measure. Running fuzzy with a different measure results in an error.
+> **Warning:** fuzziness is currently only implemented for the count measure, using the (deg, tri) representation described in the implementation note below. Running fuzzy with a different measure results in an error.
 ```
 Equivalence partition info: 
         Used measure: Count
@@ -93,6 +93,7 @@ Fuzzy similarity info:
 5: 0, 1, 2, 3, 4, 
 ```
 
+**Implementation note**: For d=1, the Count measure internally uses the representation (deg(v), tri(v)) rather than the raw (|V_{N_1}(v)|, |E_{N_1}(v)|) counts. Concretely, |V_{N_1}(v)| - 1 = deg(v) and |E_{N_1}(v)| - deg(v) = tri(v). While these representations are equivalent for anonymity computation, they differ when used in the fuzzy setting. Users reproducing the fuzzy $k$-anonymity experiments in [3] should note that the φ-similarity thresholds are applied to the (deg, tri) coordinates.
 
 ### 3. Anonymity cascade
 For cascading run:
@@ -261,21 +262,20 @@ To cite ANO-NET, please use the following reference:
  de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The anonymization problem in social networks." arXiv preprint arXiv:2409.16163
  (2024). doi: https://doi.org/10.48550/arXiv.2409.16163 \
  
-@article{dejong2024anonymization,
+@inproceedings{dejong2026anonymization,
 &nbsp;&nbsp;&nbsp;&nbsp;title={The anonymization problem in social networks},\
 &nbsp;&nbsp;&nbsp;&nbsp;author={de Jong, Rachel G and van der Loo, Mark PJ and Takes, Frank W},\
-&nbsp;&nbsp;&nbsp;&nbsp;journal={arXiv preprint arXiv:2409.16163},\
-&nbsp;&nbsp;&nbsp;&nbsp;year={2024}
+&nbsp;&nbsp;&nbsp;&nbsp;booktitle={International Workshop on Modelling and Mining Networks},\
+&nbsp;&nbsp;&nbsp;&nbsp;year={2026}
 }
 
-
 # References
-[1] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The anonymization problem in social networks." Accepted at the 17th Workshop on Modelling and Mining Networks
- (2026). ArXiv preprint: https://doi.org/10.48550/arXiv.2409.16163 \
+[1] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. “The anonymization problem in social networks.” In Lecture Notes in Computer Science, Proceedings of the 21st Workshop on Modelling and Mining Networks, pp. 18–33. Springer, 2026. \
 [2] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "A systematic comparison of measures for k-anonymity in networks." arXiv preprint arXiv:2407.02290 (2024). doi:  	
 https://doi.org/10.48550/arXiv.2407.02290 \
-[3] Liu, Kun, and Evimaria Terzi. "Towards identity anonymization on graphs." Proceedings of the 2008 ACM SIGMOD international conference on Management of data (2008). \
-[4] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "Algorithms for Efficiently Computing Structural Anonymity in Complex Networks." ACM Journal of Experimental Algorithmics (2023).  \
-[5] Hay, Michael, et al. "Anonymizing social networks." Computer science department faculty publication series (2007).\
-[6] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The effect of distant connections on node anonymity in complex networks." Scientific Reports 14.1 (2024): 1156. \
-[7] B. D. McKay and A. Piperno, "Practical graph isomorphism", Journal of Symbolic Computation, vol. 60, no. 0, pp. 94–112 (2014). 
+[3] de Jong, R. G., van der Loo, M. P. J., & Takes, F. W. (2026). Fuzzy k-anonymity in complex networks. Scientific Reports, 16, 30544. Springer Nature. \
+[4] Liu, Kun, and Evimaria Terzi. "Towards identity anonymization on graphs." Proceedings of the 2008 ACM SIGMOD international conference on Management of data (2008). \
+[5] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "Algorithms for Efficiently Computing Structural Anonymity in Complex Networks." ACM Journal of Experimental Algorithmics (2023).  \
+[6] Hay, Michael, et al. "Anonymizing social networks." Computer science department faculty publication series (2007).\
+[7] de Jong, Rachel G., Mark P. J. van der Loo, and Frank W. Takes. "The effect of distant connections on node anonymity in complex networks." Scientific Reports 14.1 (2024): 1156. \
+[8] B. D. McKay and A. Piperno, "Practical graph isomorphism", Journal of Symbolic Computation, vol. 60, no. 0, pp. 94–112 (2014). 
